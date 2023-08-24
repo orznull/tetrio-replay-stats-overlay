@@ -2,8 +2,6 @@
 
 A quick thing I made for tetrio journey windflower. Drag in a tetrio replay and populate browser sources with stats from that replay.
 
-
-
 ## Usage
 
 ### Dock Setup
@@ -27,16 +25,15 @@ On the config page, you'll see an option to generate browser sources to be used 
 
 ## Updating the stats / uploading files
 
+
 To have your browser sources update stats, simply upload a `.ttrm` file and the browser sources should be updated.
 
 ![image](https://github.com/orznull/tetrio-replay-stats-overlay/assets/70501945/08f21530-b8e8-4c61-b232-6b9729e8b7e3)
 
-
+Scuffed phone video of it working:
 
 https://github.com/orznull/tetrio-replay-stats-overlay/assets/70501945/0a402d8d-fdc0-4d88-9d52-30bca7a6369f
 
 
-
-https://github.com/orznull/tetrio-replay-stats-overlay/assets/70501945/ce6c0e88-84cc-412e-87b3-e1cfb24c5220
 
 
