@@ -1,0 +1,247 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto&display=swap"
+  rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+  integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<style>
+  body,
+  html {
+    font-family: 'Lato', sans-serif;
+    font-size: 1em;
+  }
+
+  .opened {
+    display: block !important;
+  }
+
+  .toggle-panel {
+    border: 1px solid #ccc;
+    overflow: hidden;
+    display: none;
+    padding: 20px;
+    transition: max-height 0.3s ease-in-out;
+  }
+
+  .toggle-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+  }
+
+  .toggle-icon::before {
+    content: "\25B6";
+    /* Right-pointing triangle icon */
+    margin-right: 10px;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .toggle-icon-opened::before {
+    content: "\25BC" !important;
+  }
+
+  .toggle-panel.opened {
+    max-height: 500px;
+    /* Adjust this value based on your content */
+  }
+
+  .toggle-button.opened .toggle-icon::before {
+    transform: rotate(90deg);
+  }
+
+  #link {
+    padding: 15px;
+  }
+
+  #preview {
+    font-size: 3em;
+    padding: 15px;
+  }
+</style>
+
+<p><strong>TTRM Input</strong></p>
+<input type="file" id="file-input">
+<p id="output"></p>
+
+<div class="toggle-button">
+  <span class="toggle-icon"></span>
+  Generate Browser Sources
+</div>
+<div class="toggle-panel">
+  <!-- Content of the panel goes here -->
+  <div>
+    <select id="stat-options"></select>
+    <select id="player-options">
+      <option value="player1">Player 1</option>
+      <option value="player2">Player 2</option>
+    </select>
+    <input id="color" placeholder="font color (e.g. #696969)" />
+
+    <input id="size" placeholder="font size (e.g. 30px)" />
+
+    <input id="weight" placeholder="font weight (e.g. 200, bold)" />
+
+    <button id="generate">Generate</button>
+
+    <div id="link"></div>
+    <div id="preview"></div>
+  </div>
+</div>
+
+
+<script>
+
+  const sum = (arr, accessor) => arr.reduce((acc, curr) => acc + _.get(curr, accessor), 0);
+  const max = (arr, accessor) => arr.reduce((acc, curr) => Math.max(acc, _.get(curr, accessor)), 0);
+
+
+  const clearTypes = [
+    "singles",
+    "doubles",
+    "triples",
+    "quads",
+    "minitspinsingles",
+    "tspinsingles",
+    "minitspindoubles",
+    "tspindoubles",
+    "tspintriples",
+    "allclear"
+  ]
+
+  const statGetters = {
+    name: (_, endcontext) => endcontext.user.username,
+    roundsWon: (_, endcontext) => endcontext.wins,
+    apm: data => sum(data, "aggregatestats.apm") / data.length,
+    roundTimeWeightedAPM: data => sum(data, "stats.garbage.attack") / sum(data, "time") * 60,
+    vsScore: data => sum(data, "aggregatestats.vsscore") / data.length,
+    pps: data => sum(data, "aggregatestats.pps") / data.length,
+    roundTimeWeightedPPS: data => sum(data, "stats.piecesplaced") / sum(data, "time"),
+    app: data => sum(data, "stats.garbage.attack") / sum(data, "stats.piecesplaced"),
+    apl: data => sum(data, "stats.garbage.attack") / sum(data, "stats.lines"),
+    dpp: data => sum(data, "stats.garbage.cleared") / sum(data, "stats.piecesplaced"),
+    maxCombo: data => max(data, "stats.topcombo"),
+    maxB2B: data => max(data, "stats.topbtb"),
+    inputsPerMinute: data => sum(data, 'stats.inputs') / sum(data, "time") * 60,
+    averageRoundLength: data => sum(data, "time") / data.length,
+    totalAttack: data => sum(data, "stats.garbage.attack"),
+    totalSent: data => sum(data, "stats.garbage.sent"),
+    totalTspins: data => sum(data, "stats.tspins"),
+    percentagePerfectFinesse: data => sum(data, "stats.finesse.perfectpieces") / sum(data, "stats.piecesplaced"),
+    ...(
+      clearTypes.reduce((acc, clearType) => {
+        acc[`total${clearType}`] = data => sum(data, `stats.clears.${clearType}`)
+        return acc;
+      }, {})
+    )
+  }
+
+  const selectElement = document.getElementById('stat-options');
+
+  document.getElementById("generate").addEventListener('click', () => {
+    const val = (id) => document.getElementById(id).value;
+    const url = `
+      ?stat=${val("player-options")}.${val("stat-options")}
+      ${val("weight") ? `&weight=${val("weight")}` : ""}
+      ${val("color") ? `&color=${val("color")}` : ""}
+      ${val("size") ? `&weight=${val("size")}` : ""}
+    `
+    document.getElementById('link').innerHTML = `
+      <a target = "_blank" href= "${url}">
+        ${window.location.origin}${url}
+      </a>
+
+        <p>
+          Preview:
+          <p>
+    `;
+    const preview = document.getElementById('preview');
+    preview.innerHTML = "99.99";
+    preview.style.fontSize = val('size');
+    preview.style.color = val('color');
+    preview.style.fontWeight = val('weight');
+
+
+  })
+
+  Object.keys(statGetters).forEach(function (optionText) {
+    const option = document.createElement('option');
+    option.value = optionText;
+    option.textContent = optionText;
+    selectElement.appendChild(option);
+  });
+
+  function formatValue(value) {
+    if (typeof value == "string") {
+      return value;
+    }
+    const roundedValue = Math.round(value * 100) / 100;
+    return roundedValue;
+  }
+
+  document.getElementById('file-input').addEventListener('change', function (event) {
+    const fileInput = event.target;
+
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const fileContent = event.target.result;
+        try {
+          replayInfo = JSON.parse(fileContent);
+
+          const roundData = replayInfo.data
+            .map(({ replays }) =>
+              replays.map((replay, playerIndex) =>
+                replay.events.find(({ type }) => type == 'end')
+              )
+            );
+
+          separatedRoundData = {
+            "player1": roundData.map(e => ({ ...e[0].data.export, time: e[0].frame / 60 })),
+            "player2": roundData.map(e => ({ ...e[1].data.export, time: e[1].frame / 60 }))
+          }
+
+          let stats = {};
+
+          Object.entries(separatedRoundData).forEach(([player, data], playerIndex) => {
+            stats[player] = {};
+            Object.entries(statGetters).forEach(([name, getter]) => {
+              stats[player][name] = formatValue(getter(data, replayInfo.endcontext[playerIndex]));
+            })
+          });
+
+          console.log('Parsed JSON:', stats);
+          localStorage.setItem('stats', JSON.stringify(stats));
+          document.getElementById("output").innerHTML =
+            `Loaded
+              <strong> ${replayInfo.endcontext[0].user.username}</strong> vs
+              <strong> ${replayInfo.endcontext[1].user.username}</strong>`
+
+          // Now you can use the 'replayInfo' variable as needed
+        } catch (error) {
+          document.getElementById("output").innerHTML = `Invalid Replay, check file ?`
+          console.error('Error parsing JSON:', error);
+          fileInput.value = null;
+        }
+      };
+
+      reader.readAsText(file);
+    }
+  });
+
+  const toggleButton = document.querySelector('.toggle-button');
+  const panel = document.querySelector('.toggle-panel');
+  const icon = document.querySelector('.toggle-icon')
+
+  toggleButton.addEventListener('click', function () {
+    panel.classList.toggle('opened');
+    icon.classList.toggle('toggle-icon-opened');
+  });
+</script>

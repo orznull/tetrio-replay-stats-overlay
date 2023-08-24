@@ -1,0 +1,53 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto&display=swap"
+  rel="stylesheet">
+
+<style>
+  body,
+  html {
+    font-family: 'Lato', sans-serif;
+    font-size: 3em;
+  }
+</style>
+
+<main id="output"></main>
+
+<script>
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  const statQuery = urlParams.get('stat');
+  const weightQuery = urlParams.get('weight');
+  const colorQuery = urlParams.get('color');
+  const sizeQuery = urlParams.get('size');
+
+  const output = document.getElementById("output");
+
+  output.style.fontWeight = weightQuery;
+  output.style.color = colorQuery;
+  output.style.fontSize = sizeQuery;
+
+  const tryFetchStats = () => {
+    try {
+      const stats = JSON.parse(localStorage.getItem('stats'));
+      console.log(stats);
+      if (!stats) {
+        throw new Error();
+      }
+      window.player1 = stats.player1;
+      window.player2 = stats.player2;
+
+      output.innerHTML = eval(statQuery) || "N/A";
+    }
+    catch (e) {
+      console.log(e);
+      output.innerHTML = "N/A";
+    }
+  }
+
+  tryFetchStats();
+  addEventListener("storage", tryFetchStats);
+
+</script>
