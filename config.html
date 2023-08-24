@@ -151,7 +151,7 @@
 
   document.getElementById("generate").addEventListener('click', () => {
     const val = (id) => document.getElementById(id).value;
-    const url = `${window.location.origin}
+    const url = `${window.location.origin}${window.location.pathname}
       ?stat=${val("player-options")}.${val("stat-options")}
       ${val("weight") ? `&weight=${val("weight")}` : ""}
       ${val("color") ? `&color=${val("color")}` : ""}
@@ -160,7 +160,7 @@
 
     document.getElementById('link').innerHTML = `
       <a target = "_blank" href= "${url}">
-        ${window.location.origin}${url}
+        ${url}
       </a>
         <p>
           Preview:
