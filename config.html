@@ -149,9 +149,23 @@
 
   const selectElement = document.getElementById('stat-options');
 
+  function removeLastPathSegment(pathname) {
+    const segments = pathname.split('/');
+
+    // Remove the last segment if there's more than one segment
+    if (segments.length > 1) {
+      segments.pop();
+    }
+
+    // Reconstruct the pathname
+    const updatedPathname = segments.join('/');
+
+    return updatedPathname;
+  }
+
   document.getElementById("generate").addEventListener('click', () => {
     const val = (id) => document.getElementById(id).value;
-    const url = `${window.location.origin}${window.location.pathname}
+    const url = `${window.location.origin}${removeLastPathSegment(window.location.pathname)}
       ?stat=${val("player-options")}.${val("stat-options")}
       ${val("weight") ? `&weight=${val("weight")}` : ""}
       ${val("color") ? `&color=${val("color")}` : ""}
