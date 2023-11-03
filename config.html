@@ -163,6 +163,32 @@
     return updatedPathname;
   }
 
+  function createStatsTable(stats) {
+    // Create an array of player data objects
+    const players = Object.values(stats);
+
+    // Get the property names for the table columns
+    const propertyNames = Object.keys(players[0]);
+
+    // Create the table HTML
+    let tableHTML = '<table border="1"><tr><th></th>';
+    for (const playerName in players) {
+      tableHTML += `<th>${playerName}</th>`;
+    }
+    tableHTML += '</tr>';
+
+    for (const propName of propertyNames) {
+      tableHTML += `<tr><td>${propName}</td>`;
+      for (const player of players) {
+        tableHTML += `<td>${player[propName]}</td>`;
+      }
+      tableHTML += '</tr>';
+    }
+
+    tableHTML += '</table>';
+    return tableHTML;
+  }
+
   document.getElementById("generate").addEventListener('click', () => {
     const val = (id) => document.getElementById(id).value;
     const url = `${window.location.origin}${removeLastPathSegment(window.location.pathname)}
@@ -274,7 +300,9 @@
           document.getElementById("output").innerHTML =
             `Loaded
               <strong> ${replayInfo.endcontext[0].user.username}</strong> vs
-              <strong> ${replayInfo.endcontext[1].user.username}</strong>`
+              <strong> ${replayInfo.endcontext[1].user.username}</strong>
+              ${createStatsTable(stats)}            
+              `
 
           // Now you can use the 'replayInfo' variable as needed
         } catch (error) {
