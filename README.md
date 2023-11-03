@@ -9,7 +9,7 @@ A quick thing I made for tetrio journey windflower. Drag in a tetrio replay and 
 Add the config window to the OBS as a custom browser dock through **Docks > Custom Browser Docks**, then adding in the url: https://orznull.github.io/tetrio-replay-stats-overlay/config
 ![image](https://github.com/orznull/tetrio-replay-stats-overlay/assets/70501945/4abfe073-09cc-4405-a237-7b8e29b2343d)
 
-Because this overlay communicates through browser local storage, you must have the config be a dock on your OBS. The links to the browser sources are just links, so you can generate them anywhere, but the replay uploading must occur on an OBS dock.
+**\*\* Because this overlay communicates through browser local storage, you must have the config be a dock on your OBS. The links to the browser sources are just links, so you can generate them anywhere, but the replay uploading must occur on an OBS dock. \*\***
 
 ### Getting the stat browser sources
 
